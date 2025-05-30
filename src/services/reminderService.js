@@ -32,9 +32,9 @@ export const updateReminder = async (id, data) => {
 };
 
 export const deleteReminder = async (id) => {
-  const res = await fetch(`${BASE_URL}/${id}`, { method: 'DELETE' }); // ✅ Fixed
+  const res = await fetch(`${BASE_URL}/${id}`, { method: 'DELETE' });
   if (!res.ok) {
-    const errorText = await res.text(); // Optional: log backend error
+    const errorText = await res.text();
     console.error('Delete failed:', errorText);
     throw new Error('Delete failed');
   }
