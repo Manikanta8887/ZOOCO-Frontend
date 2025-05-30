@@ -1,0 +1,42 @@
+const BASE_URL = 'http://localhost:5000/api/reminders';
+
+export const fetchReminders = async () => {
+  const res = await fetch(BASE_URL);
+  return res.json();
+};
+
+export const createReminder = async (data) => {
+  const payload = { ...data, date: data.time };
+  delete payload.time;
+
+  const res = await fetch(BASE_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+
+  return res.json();
+};
+
+export const updateReminder = async (id, data) => {
+  const payload = { ...data, date: data.time };
+  delete payload.time;
+
+  const res = await fetch(`${BASE_URL}/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+
+  return res.json();
+};
+
+export const deleteReminder = async (id) => {
+  const res = await fetch(`${BASE_URL}/${id}`, { method: 'DELETE' }); // ✅ Fixed
+  if (!res.ok) {
+    const errorText = await res.text(); // Optional: log backend error
+    console.error('Delete failed:', errorText);
+    throw new Error('Delete failed');
+  }
+  return true;
+};
