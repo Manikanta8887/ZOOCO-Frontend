@@ -1,7 +1,7 @@
 // import { useParams, useNavigate } from 'react-router-dom';
 // import { useEffect, useState } from 'react';
 // import ReminderForm from '../components/ReminderForm';
-// import { fetchReminders, createReminder, updateReminder } from '../services/reminderService';
+// import { createReminder, updateReminder } from '../services/reminderService';
 // import useReminderStore from '../store/reminderStore';
 
 // export default function AddEditReminder() {
@@ -18,14 +18,18 @@
 //   }, [id, reminders]);
 
 //   const handleSubmit = async (data) => {
-//     if (id) {
-//       const res = await updateReminder(id, data);
-//       setReminders(reminders.map(r => r._id === id ? res.data : r));
-//     } else {
-//       const res = await createReminder(data);
-//       setReminders([...reminders, res.data]);
+//     try {
+//       if (id) {
+//         const res = await updateReminder(id, data);
+//         setReminders(reminders.map(r => r._id === id ? res : r));
+//       } else {
+//         const res = await createReminder(data);
+//         setReminders([...reminders, res]);
+//       }
+//       navigate('/');
+//     } catch (error) {
+//       alert(error.message);
 //     }
-//     navigate('/');
 //   };
 
 //   return (
@@ -50,9 +54,13 @@ export default function AddEditReminder() {
   const [initialData, setInitialData] = useState(null);
 
   useEffect(() => {
-    if (id) {
-      const reminder = reminders.find(r => r._id === id);
-      setInitialData(reminder);
+    if (id && reminders.length) {
+      const reminder = reminders.find((r) => r._id === id);
+      if (reminder) {
+        setInitialData(reminder);
+      } else {
+        console.warn('Reminder not found for id:', id);
+      }
     }
   }, [id, reminders]);
 
@@ -60,7 +68,7 @@ export default function AddEditReminder() {
     try {
       if (id) {
         const res = await updateReminder(id, data);
-        setReminders(reminders.map(r => r._id === id ? res : r));
+        setReminders(reminders.map((r) => (r._id === id ? res : r)));
       } else {
         const res = await createReminder(data);
         setReminders([...reminders, res]);
@@ -70,6 +78,10 @@ export default function AddEditReminder() {
       alert(error.message);
     }
   };
+
+  if (id && !initialData) {
+    return <p className="text-gray-500">Loading reminder data...</p>;
+  }
 
   return (
     <div className="p-4">
